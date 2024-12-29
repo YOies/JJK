@@ -1,0 +1,308 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local TeleportService = cloneref(game:GetService("TeleportService"))
+
+local Window = Fluent:CreateWindow({
+    Title = "Private Scripts - L-HUB",
+    SubTitle = "by kazoun x kvv",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
+
+--Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
+local Tabs = {
+    Main = Window:AddTab({ Title = "OP", Icon = "" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+
+
+
+    Tabs.Main:AddParagraph({
+        Title = "Note:",
+        Content = "1. Use Start RollBack before do anything else. \n2.Use Rollback Data if u didnt get what u wanted. \n3. Use Save Current Data if you got what u wanted."
+    })
+
+
+    
+
+
+    Tabs.Main:AddButton({
+        Title = "Start Rollback",
+        Description = "",
+        Callback = function()
+            local args = {
+                [1] = "\255"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):WaitForChild("Data"):WaitForChild("ChangeSetting"):InvokeServer(unpack(args))
+            Fluent:Notify({
+                Title = "Rollback Alert",
+                Content = "Start Rollback, do what you want.",
+                Duration = 200 
+            })
+        
+        end
+    })
+
+    Tabs.Main:AddButton({
+        Title = "Rollback Data",
+        Description = "",
+        Callback = function()
+    if #game.Players:GetPlayers() <= 1 then
+        game.Players.LocalPlayer:Kick("\nRollback...")
+		wait()
+		TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
+	else
+		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId,  game.Players.LocalPlayer)
+	end
+    Fluent:Notify({
+        Title = "Rollback Status",
+        Content = "Rollback Your Old Data, Please dont leave!",
+        Duration = 200
+    })
+end
+})
+
+
+
+
+
+
+
+    
+    Tabs.Main:AddButton({
+        Title = "Redeem All Codes",
+        Description = "",
+        Callback = function()
+            local codes = {"RELEASE","MERRY_CHRISTMAS","TOP_SECRET", "SHUTDOWN_AGAIN", "MISSION_SHUTDOWN", "RELEASE_SHUTDOWN_SRRY","BACK_UP_AGAIN"} 
+            for _, code in pairs (codes) do 
+             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):WaitForChild("Data"):WaitForChild("RedeemCode"):InvokeServer(tostring(code)) 
+             print('used ' .. code )
+             task.wait(9)
+            end
+        end
+    })
+
+
+    local innates = {"Infinity","Soul Manipulation","Gambler Fever","Demon Vessel","Curse Queen","Star Rage"} 
+
+    local TraitSelect = Tabs.Main:AddDropdown("TraitSelectDP", {
+        Title = "Select Multiple Innates To Spin:",
+        Description = "",
+        Values = innates,
+        Multi = true,
+        Default = {"--SELECT--"},
+    })
+
+    local AutoSpinTrait1 = Tabs.Main:AddToggle("AutoSpinTrait1Toggle", {Title = "Auto Spin Innate 1", Default = false })
+    local AutoSpinTrait2 = Tabs.Main:AddToggle("AutoSpinTrait2Toggle", {Title = "Auto Spin Innate 2", Default = false })
+ 
+    AutoSpinTrait1:OnChanged(function()
+        while Options.AutoSpinTrait1Toggle.Value == true do
+            task.wait(.1)
+local valueToCheck = game:GetService("Players").LocalPlayer.ReplicatedData.innates["1"].Value
+local matched = false
+
+for i, v in pairs(getgenv().ActualNameToSnipe) do
+    if valueToCheck == v then
+        matched = true
+        function SendMessageEMBED(url, embed)
+            local http = game:GetService("HttpService")
+            local headers = {
+                ["Content-Type"] = "application/json"
+            }
+            local data = {
+                ["embeds"] = {
+                    {
+                        ["title"] = embed.title,
+                        ["description"] = embed.description,
+                        ["color"] = embed.color,
+                        ["fields"] = embed.fields,
+                    }
+                }
+            }
+            local body = http:JSONEncode(data)
+            request({
+                Url = url,
+                Method = "POST",
+                Headers = headers,
+                Body = body
+            })
+        end
+        
+        local webhookUrl = getgenv().WebhooKURL
+        local thumbsDownEmoji = utf8.char(0x1F44E)
+        
+        
+        
+        local embed = {
+            ["title"] = "Innates Notify.",
+            ["description"] = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
+            ["color"] = 65280,
+            ["fields"] = {
+                {
+                    ["name"] = "INNATES NAME [ SLOT 1 ]:",
+                    ["value"] =  valueToCheck,
+                },
+            }
+        }
+        
+        
+        
+        SendMessageEMBED(webhookUrl, embed)
+        Options.AutoSpinTrait1Toggle:SetValue(false)
+        break
+    end
+end
+
+if not matched then
+    local args = {
+        [1] = 1
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):WaitForChild("Data"):WaitForChild("InnateSpin"):InvokeServer(unpack(args))
+    
+end
+
+
+            if Options.AutoSpinTrait1Toggle.Value == false then
+                break
+            end
+        end
+    end)
+    
+    
+    AutoSpinTrait2:OnChanged(function()
+        while Options.AutoSpinTrait2Toggle.Value == true do
+            task.wait(.1)
+local valueToCheck = game:GetService("Players").LocalPlayer.ReplicatedData.innates["2"].Value
+local matched = false
+
+for i, v in pairs(getgenv().ActualNameToSnipe) do
+    if valueToCheck == v then
+        matched = true
+        function SendMessageEMBED(url, embed)
+            local http = game:GetService("HttpService")
+            local headers = {
+                ["Content-Type"] = "application/json"
+            }
+            local data = {
+                ["embeds"] = {
+                    {
+                        ["title"] = embed.title,
+                        ["description"] = embed.description,
+                        ["color"] = embed.color,
+                        ["fields"] = embed.fields,
+                    }
+                }
+            }
+            local body = http:JSONEncode(data)
+            request({
+                Url = url,
+                Method = "POST",
+                Headers = headers,
+                Body = body
+            })
+        end
+        
+        local webhookUrl =  getgenv().WebhooKURL
+        local thumbsDownEmoji = utf8.char(0x1F44E)
+        
+        
+        
+        local embed = {
+            ["title"] = "Innates Notify.",
+            ["description"] = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
+            ["color"] = 65280,
+            ["fields"] = {
+                {
+                    ["name"] = "INNATES NAME [ SLOT 2 ]:",
+                    ["value"] =  valueToCheck,
+                },
+            }
+        }
+        
+        
+        
+        SendMessageEMBED(webhookUrl, embed)
+        Options.AutoSpinTrait2Toggle:SetValue(false)
+        break
+    end
+end
+
+if not matched then
+    local args = {
+        [1] = 2
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Server"):WaitForChild("Data"):WaitForChild("InnateSpin"):InvokeServer(unpack(args))
+    
+end
+
+
+            if Options.AutoSpinTrait2Toggle.Value == false then
+                break
+            end
+        end
+    end)
+    
+    
+
+    TraitSelect:OnChanged(function(Value)
+        getgenv().ActualNameToSnipe = {}
+        for i, v in pairs(Value) do
+            table.insert(getgenv().ActualNameToSnipe, i)  -- Insert the key (i) into the table
+        end
+        print("Innates changed:", table.concat(getgenv().ActualNameToSnipe, ","))
+    end)
+    
+
+
+   
+end 
+
+-- Addons:
+-- SaveManager (Allows you to have a configuration system)
+-- InterfaceManager (Allows you to have a interface managment system)
+
+-- Hand the library over to our managers
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+-- Ignore keys that are used by ThemeManager.
+-- (we dont want configs to save themes, do we?)
+SaveManager:IgnoreThemeSettings()
+
+-- You can add indexes of elements the save manager should ignore
+SaveManager:SetIgnoreIndexes({})
+
+-- use case for doing it this way:
+-- a script hub could have themes in a global folder
+-- and game configs in a separate folder per game
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "Fluent",
+    Content = "The script has been loaded.",
+    Duration = 8
+})
+
+-- You can use the SaveManager:LoadAutoloadConfig() to load a config
+-- which has been marked to be one that auto loads!
+SaveManager:LoadAutoloadConfig()
+
